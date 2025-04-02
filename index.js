@@ -34,8 +34,18 @@ Return JSON with buyer_type, suggested_campaign, sms_message, email_subject, ema
     });
 
     const responseText = completion.choices[0].message.content;
-    const jsonData = JSON.parse(responseText);
-    res.json(jsonData);
+
+    try {
+      const jsonStart = responseText.indexOf('{');
+      const jsonEnd = responseText.lastIndexOf('}');
+      const jsonString = responseText.substring(jsonStart, jsonEnd + 1);
+      const jsonData = JSON.parse(jsonString);
+      res.json(jsonData);
+    } catch (err) {
+      console.error("Error parsing JSON from OpenAI response:", responseText);
+      res.status(500).json({ error: 'Failed to parse AI response' });
+    }
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'AI processing failed.' });
