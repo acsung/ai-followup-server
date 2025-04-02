@@ -16,7 +16,8 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // ✅ OpenAI Configuration
-const configuration = new Configuration({
+const OpenAI = require("openai");
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
