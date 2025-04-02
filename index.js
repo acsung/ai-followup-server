@@ -34,21 +34,17 @@ Return JSON with buyer_type, suggested_campaign, sms_message, email_subject, ema
     });
 
     const responseText = completion.choices[0].message.content;
+    console.log("🔍 RAW AI Response:\n", responseText); // 👈 This line logs it
 
-    try {
-      const jsonStart = responseText.indexOf('{');
-      const jsonEnd = responseText.lastIndexOf('}');
-      const jsonString = responseText.substring(jsonStart, jsonEnd + 1);
-      const jsonData = JSON.parse(jsonString);
-      res.json(jsonData);
-    } catch (err) {
-      console.error("Error parsing JSON from OpenAI response:", responseText);
-      res.status(500).json({ error: 'Failed to parse AI response' });
-    }
+    const jsonStart = responseText.indexOf('{');
+    const jsonEnd = responseText.lastIndexOf('}');
+    const jsonString = responseText.substring(jsonStart, jsonEnd + 1);
+    const jsonData = JSON.parse(jsonString);
 
+    res.json(jsonData);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI processing failed.' });
+    console.error("❌ Error parsing AI response:", error.message);
+    res.status(500).json({ error: 'Failed to parse AI response' });
   }
 });
 
