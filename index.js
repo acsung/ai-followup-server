@@ -49,5 +49,37 @@ Return JSON with buyer_type, suggested_campaign, sms_message, email_subject, ema
 });
 
 const PORT = process.env.PORT || 5000;
+const express = require('express');
+const fetch = require('node-fetch'); // If not already imported
+const cors = require('cors');
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// Your existing routes are here...
+
+// 🚀 NEW: Relay Form Data to Zapier
+app.post("/webhook-relay", async (req, res) => {
+  try {
+    const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/5510257/2xhjiqd/";
+
+    const response = await fetch(zapierWebhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Zapier responded with status ${response.status}`);
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error forwarding to Zapier:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
